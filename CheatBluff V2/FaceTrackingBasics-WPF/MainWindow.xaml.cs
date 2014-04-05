@@ -14,6 +14,7 @@ namespace FaceTrackingBasics
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
     using Microsoft.Kinect.Toolkit;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -25,6 +26,8 @@ namespace FaceTrackingBasics
         private WriteableBitmap colorImageWritableBitmap;
         private byte[] colorImageData;
         private ColorImageFormat currentColorImageFormat = ColorImageFormat.Undefined;
+
+        private SkeletonLogger skeletonLogger;
 
         //Start Skeleton Tracking Variables
         /// <summary>
@@ -96,6 +99,8 @@ namespace FaceTrackingBasics
         public MainWindow()
         {
             InitializeComponent();
+
+            skeletonLogger = new SkeletonLogger("skeletonLog.csv");
 
             var faceTrackingViewerBinding = new Binding("Kinect") { Source = sensorChooser };
             faceTrackingViewer.SetBinding(FaceTrackingViewer.KinectProperty, faceTrackingViewerBinding);
@@ -328,9 +333,13 @@ namespace FaceTrackingBasics
 
                 if (skeletons.Length != 0)
                 {
+
                     foreach (Skeleton skel in skeletons)
                     {
                         RenderClippedEdges(skel, dc);
+                        
+                        //Append Skeleton To A File
+                        skeletonLogger.AppendSkeleton(skel);
 
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
@@ -365,6 +374,8 @@ namespace FaceTrackingBasics
             this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderLeft);
             this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderRight);
             this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.Spine);
+
+            //Check Torso While sitting, possibly not rendered when sitting
             this.DrawBone(skeleton, drawingContext, JointType.Spine, JointType.HipCenter);
             this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipLeft);
             this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipRight);
@@ -379,7 +390,8 @@ namespace FaceTrackingBasics
             this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
             this.DrawBone(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
 
-            // Left Leg
+
+            // Left Leg - Sitting Position doesn't require Leg Joints
             this.DrawBone(skeleton, drawingContext, JointType.HipLeft, JointType.KneeLeft);
             this.DrawBone(skeleton, drawingContext, JointType.KneeLeft, JointType.AnkleLeft);
             this.DrawBone(skeleton, drawingContext, JointType.AnkleLeft, JointType.FootLeft);
@@ -393,7 +405,7 @@ namespace FaceTrackingBasics
             foreach (Joint joint in skeleton.Joints)
             {
                 Brush drawBrush = null;
-
+                
                 if (joint.TrackingState == JointTrackingState.Tracked)
                 {
                     drawBrush = this.trackedJointBrush;
@@ -442,7 +454,7 @@ namespace FaceTrackingBasics
                 return;
             }
 
-            // Don't draw if both points are inferred
+            // Don't draw if both points are inferred - Might want to draw it eben if inferred
             if (joint0.TrackingState == JointTrackingState.Inferred &&
                 joint1.TrackingState == JointTrackingState.Inferred)
             {
