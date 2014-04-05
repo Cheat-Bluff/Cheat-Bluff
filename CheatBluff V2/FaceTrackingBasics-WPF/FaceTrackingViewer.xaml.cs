@@ -46,6 +46,7 @@ namespace FaceTrackingBasics
 
         private Skeleton[] skeletonData;
 
+
         public FaceTrackingViewer()
         {
             this.InitializeComponent();
@@ -258,6 +259,13 @@ namespace FaceTrackingBasics
 
             public int LastTrackedFrame { get; set; }
 
+            private SkeletonLogger skeletonLog;
+
+            public SkeletonFaceTracker()
+            {
+                skeletonLog = new SkeletonLogger("faceLogger.csv");
+            }
+
             public void Dispose()
             {
                 if (this.faceTracker != null)
@@ -302,6 +310,8 @@ namespace FaceTrackingBasics
                 }
 
                 drawingContext.DrawGeometry(Brushes.LightYellow, new Pen(Brushes.LightYellow, 1.0), faceModelGroup);
+
+                skeletonLog.AppendFaceSkeleton(faceModelPts);
             }
 
             /// <summary>

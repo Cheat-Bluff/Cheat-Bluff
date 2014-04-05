@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace FaceTrackingBasics
 {
@@ -16,7 +17,7 @@ namespace FaceTrackingBasics
             filePath = path;
         }
 
-        public void AppendString(String text)
+        public void AppendSkeletonString(String text)
         {
             if (!File.Exists(filePath))
             {
@@ -72,6 +73,24 @@ namespace FaceTrackingBasics
             }
         }
 
+        public void AppendFaceString(String text)
+        {
+            if (!File.Exists(filePath))
+            {
+                using (StreamWriter sw = File.CreateText(filePath))
+                {
+                    sw.WriteLine(text);
+                }
+            }
+            else
+            {
+                using (StreamWriter sw = File.AppendText(filePath))
+                {
+                    sw.WriteLine(text);
+                }
+            }
+        }
+
         public void AppendSkeleton(Skeleton skeleton)
         {
             SkeletonPoint head = skeleton.Joints[JointType.Head].Position;
@@ -102,7 +121,22 @@ namespace FaceTrackingBasics
             sb.Append(wristRight.X + "," + wristRight.Y + "," + wristRight.Z + ",");
             sb.Append(handRight.X + "," + handRight.Y + "," + handRight.Z);
 
-            AppendString(sb.ToString());
+            AppendSkeletonString(sb.ToString());
+        }
+
+        public void AppendFaceSkeleton(List<Point> facePts)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+
+            for (int i = 0; i < facePts.Count-1; i++)
+            {
+                sb.Append(facePts[i] + ",");
+            }
+            sb.Append(facePts[facePts.Count - 1]);
+
+            AppendFaceString(sb.ToString());
         }
     }
 }
