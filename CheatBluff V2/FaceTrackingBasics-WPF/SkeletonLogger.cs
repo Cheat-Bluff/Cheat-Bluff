@@ -132,9 +132,9 @@ namespace FaceTrackingBasics
 
             for (int i = 0; i < facePts.Count-1; i++)
             {
-                sb.Append(facePts[i] + ",");
+                sb.Append(facePts[i].X + "," + facePts[i].Y + ",");
             }
-            sb.Append(facePts[facePts.Count - 1]);
+            sb.Append(facePts[facePts.Count - 1].X + "," + facePts[facePts.Count - 1].Y);
 
             AppendFaceString(sb.ToString());
         }
