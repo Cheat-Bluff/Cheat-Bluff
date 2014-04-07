@@ -338,12 +338,12 @@ namespace FaceTrackingBasics
                     {
                         RenderClippedEdges(skel, dc);
                         
-                        //Append Skeleton To A File
-                        skeletonLogger.AppendSkeleton(skel);
 
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
                             this.DrawBonesAndJoints(skel, dc);
+                            //Append Skeleton To A File
+                            skeletonLogger.AppendSkeleton(skel);
                         }
                         else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
                         {
