@@ -8,9 +8,10 @@ using System.Windows;
 
 namespace FaceTrackingBasics
 {
+    //comment test
     class SkeletonLogger
     {
-        private String filePath;
+        private String filePath; 
 
         public SkeletonLogger(String path)
         {
