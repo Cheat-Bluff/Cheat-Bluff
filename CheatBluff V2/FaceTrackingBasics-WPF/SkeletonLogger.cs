@@ -11,15 +11,19 @@ namespace FaceTrackingBasics
     //comment test
     class SkeletonLogger
     {
-        private String filePath; 
-
+        private String filePath;
+        private StringBuilder stringBuilder;
+        private int SaveEverySoSteps = 1000;
+        private int frameCount;
         public SkeletonLogger(String path)
         {
             filePath = path;
+            frameCount = 0;
         }
 
         public void AppendSkeletonString(String text)
         {
+            frameCount++;
             if (!File.Exists(filePath))
             {
                 using (StreamWriter sw = File.CreateText(filePath))
@@ -67,15 +71,22 @@ namespace FaceTrackingBasics
             }
             else
             {
-                using (StreamWriter sw = File.AppendText(filePath))
-                {
-                    sw.WriteLine(text);
-                }
+                    if (stringBuilder == null)
+                        stringBuilder = new StringBuilder();
+
+                    stringBuilder.AppendLine(text);
+                    //sw.WriteLine(text);
+            }
+
+            if (frameCount % SaveEverySoSteps == 0)
+            {
+                SaveString();
             }
         }
 
         public void AppendFaceString(String text)
         {
+            frameCount++;
             if (!File.Exists(filePath))
             {
                 using (StreamWriter sw = File.CreateText(filePath))
@@ -85,9 +96,35 @@ namespace FaceTrackingBasics
             }
             else
             {
+                    if (stringBuilder == null)
+                        stringBuilder = new StringBuilder();
+
+                    stringBuilder.AppendLine(text);
+                    //sw.WriteLine(text);
+            }
+
+            if (frameCount % SaveEverySoSteps == 0)
+            {
+                SaveString();
+            }
+        }
+
+        public void SaveString()
+        {
+            if (!File.Exists(filePath))
+            {
+                using (StreamWriter sw = File.CreateText(filePath))
+                {
+                    sw.WriteLine(stringBuilder.ToString());
+                    stringBuilder.Clear();
+                }
+            }
+            else
+            {
                 using (StreamWriter sw = File.AppendText(filePath))
                 {
-                    sw.WriteLine(text);
+                    sw.WriteLine(stringBuilder.ToString());
+                    stringBuilder.Clear();
                 }
             }
         }
