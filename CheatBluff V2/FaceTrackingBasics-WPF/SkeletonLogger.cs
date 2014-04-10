@@ -71,11 +71,11 @@ namespace FaceTrackingBasics
             }
             else
             {
-                if (stringBuilder == null)
-                    stringBuilder = new StringBuilder();
+                    if (stringBuilder == null)
+                        stringBuilder = new StringBuilder();
 
-                stringBuilder.AppendLine(text);
-                //sw.WriteLine(text);
+                    stringBuilder.AppendLine(text);
+                    //sw.WriteLine(text);
             }
 
             if (frameCount % SaveEverySoSteps == 0)
@@ -96,11 +96,11 @@ namespace FaceTrackingBasics
             }
             else
             {
-                if (stringBuilder == null)
-                    stringBuilder = new StringBuilder();
+                    if (stringBuilder == null)
+                        stringBuilder = new StringBuilder();
 
-                stringBuilder.AppendLine(text);
-                //sw.WriteLine(text);
+                    stringBuilder.AppendLine(text);
+                    //sw.WriteLine(text);
             }
 
             if (frameCount % SaveEverySoSteps == 0)
@@ -148,7 +148,7 @@ namespace FaceTrackingBasics
             SkeletonPoint handRight = skeleton.Joints[JointType.HandRight].Position;
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ", ");
+            sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+", ");
             sb.Append(head.X.ToString() + "," + head.Y.ToString() + "," + head.Z.ToString() + ",");
             sb.Append(shoulderCenter.X + "," + shoulderCenter.Y + "," + shoulderCenter.Z + ",");
             sb.Append(shoulderLeft.X + "," + shoulderLeft.Y + "," + shoulderLeft.Z + ",");
@@ -169,9 +169,9 @@ namespace FaceTrackingBasics
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ",");
+            sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+",");
 
-            for (int i = 0; i < facePts.Count - 1; i++)
+            for (int i = 0; i < facePts.Count-1; i++)
             {
                 sb.Append(facePts[i].X + "," + facePts[i].Y + ",");
             }
