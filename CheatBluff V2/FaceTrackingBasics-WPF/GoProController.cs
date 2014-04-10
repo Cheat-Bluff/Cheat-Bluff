@@ -11,6 +11,10 @@ using GoPro.Hero.Browser.Media;
 
 using System.IO;
 
+using GoPro.Hero.Commands;
+using GoPro.Hero.Filtering;
+using GoPro.Hero.Utilities;
+
 namespace FaceTrackingBasics
 {
     class GoProController
@@ -27,6 +31,7 @@ namespace FaceTrackingBasics
             camera = Camera.Create<Hero3Camera>("10.5.5.9"); //address of the camera, default is 10.5.5.9
 
             PowerUp(camera);
+            camera.PrepareCommand<CommandCameraSetTime>().Set(DateTime.Now).Execute();
         }
 
         public void StartRecording()
@@ -64,6 +69,11 @@ namespace FaceTrackingBasics
 
 
             downloaderThread.Join();
+
+            if (!downloader.successful)
+            {
+                throw new Exception("Unsuccessful download");
+            }
 
         }
 

@@ -526,7 +526,14 @@ namespace FaceTrackingBasics
 
             if (goProController != null)
             {
-                goProController.StopRecording(recordingDate);
+                try
+                {
+                    goProController.StopRecording(recordingDate);
+                }
+                catch
+                {
+                    MessageBox.Show("Download of file unsuccessfull.. Make sure you get the file from the gopro directly");
+                }
             }
 
 

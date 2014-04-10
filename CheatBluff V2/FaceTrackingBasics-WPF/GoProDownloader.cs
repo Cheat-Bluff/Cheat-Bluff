@@ -17,6 +17,7 @@ namespace FaceTrackingBasics
     {
         private volatile Hero3Camera camera;
         private String filename;
+        public volatile bool successful = true;
 
         public GoProDownloader(Hero3Camera camera, String filename)
         {
@@ -26,21 +27,28 @@ namespace FaceTrackingBasics
 
         public void Download()
         {
-            Video video = camera.Contents().VideosAsync().Result.LastOrDefault();
-
-            if (video == null)
+            try
             {
-                Console.WriteLine("no video found");
-                return;
+                Video video = camera.Contents().VideosAsync().Result.LastOrDefault();
+
+                if (video == null)
+                {
+                    Console.WriteLine("no video found");
+                    return;
+                }
+
+                Thread.Sleep(1000);
+
+                FileStream writeStream = new FileStream(filename + "_gopro.mp4", FileMode.Create, FileAccess.Write);
+
+                Stream response = video.DownloadAsync().Result.GetResponseStream();
+                //write to the stream
+                ReadWriteStream(response, writeStream);
             }
-
-            Thread.Sleep(1000);
-
-            FileStream writeStream = new FileStream(filename + "_gopro.mp4", FileMode.Create, FileAccess.Write);
-
-            Stream response = video.DownloadAsync().Result.GetResponseStream();
-            //write to the stream
-            ReadWriteStream(response, writeStream);
+            catch (Exception ex)
+            {
+                successful = false;
+            }
         }
 
 
