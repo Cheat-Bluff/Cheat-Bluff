@@ -11,15 +11,19 @@ namespace FaceTrackingBasics
     //comment test
     class SkeletonLogger
     {
-        private String filePath; 
-
+        private String filePath;
+        private StringBuilder stringBuilder;
+        private int SaveEverySoSteps = 1000;
+        private int frameCount;
         public SkeletonLogger(String path)
         {
             filePath = path;
+            frameCount = 0;
         }
 
         public void AppendSkeletonString(String text)
         {
+            frameCount++;
             if (!File.Exists(filePath))
             {
                 using (StreamWriter sw = File.CreateText(filePath))
@@ -67,15 +71,22 @@ namespace FaceTrackingBasics
             }
             else
             {
-                using (StreamWriter sw = File.AppendText(filePath))
-                {
-                    sw.WriteLine(text);
-                }
+                if (stringBuilder == null)
+                    stringBuilder = new StringBuilder();
+
+                stringBuilder.AppendLine(text);
+                //sw.WriteLine(text);
+            }
+
+            if (frameCount % SaveEverySoSteps == 0)
+            {
+                SaveString();
             }
         }
 
         public void AppendFaceString(String text)
         {
+            frameCount++;
             if (!File.Exists(filePath))
             {
                 using (StreamWriter sw = File.CreateText(filePath))
@@ -85,9 +96,38 @@ namespace FaceTrackingBasics
             }
             else
             {
-                using (StreamWriter sw = File.AppendText(filePath))
+                if (stringBuilder == null)
+                    stringBuilder = new StringBuilder();
+
+                stringBuilder.AppendLine(text);
+                //sw.WriteLine(text);
+            }
+
+            if (frameCount % SaveEverySoSteps == 0)
+            {
+                SaveString();
+            }
+        }
+
+        public void SaveString()
+        {
+            if (stringBuilder != null)
+            {
+                if (!File.Exists(filePath))
                 {
-                    sw.WriteLine(text);
+                    using (StreamWriter sw = File.CreateText(filePath))
+                    {
+                        sw.WriteLine(stringBuilder.ToString());
+                        stringBuilder.Clear();
+                    }
+                }
+                else
+                {
+                    using (StreamWriter sw = File.AppendText(filePath))
+                    {
+                        sw.WriteLine(stringBuilder.ToString());
+                        stringBuilder.Clear();
+                    }
                 }
             }
         }
@@ -108,7 +148,7 @@ namespace FaceTrackingBasics
             SkeletonPoint handRight = skeleton.Joints[JointType.HandRight].Position;
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+", ");
+            sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ", ");
             sb.Append(head.X.ToString() + "," + head.Y.ToString() + "," + head.Z.ToString() + ",");
             sb.Append(shoulderCenter.X + "," + shoulderCenter.Y + "," + shoulderCenter.Z + ",");
             sb.Append(shoulderLeft.X + "," + shoulderLeft.Y + "," + shoulderLeft.Z + ",");
@@ -129,9 +169,9 @@ namespace FaceTrackingBasics
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+",");
+            sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ",");
 
-            for (int i = 0; i < facePts.Count-1; i++)
+            for (int i = 0; i < facePts.Count - 1; i++)
             {
                 sb.Append(facePts[i].X + "," + facePts[i].Y + ",");
             }

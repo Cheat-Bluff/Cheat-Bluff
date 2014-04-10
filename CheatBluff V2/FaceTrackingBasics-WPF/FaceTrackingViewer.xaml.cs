@@ -259,7 +259,7 @@ namespace FaceTrackingBasics
 
             public int LastTrackedFrame { get; set; }
 
-            private SkeletonLogger skeletonLog;
+            public SkeletonLogger skeletonLog;
 
             public SkeletonFaceTracker()
             {

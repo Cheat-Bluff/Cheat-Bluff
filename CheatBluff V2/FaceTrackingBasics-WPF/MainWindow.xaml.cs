@@ -16,6 +16,7 @@ namespace FaceTrackingBasics
     using Microsoft.Kinect.Toolkit;
     using System.Collections.Generic;
 
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -27,7 +28,7 @@ namespace FaceTrackingBasics
         private byte[] colorImageData;
         private ColorImageFormat currentColorImageFormat = ColorImageFormat.Undefined;
 
-        private SkeletonLogger skeletonLogger;
+        private SkeletonLogger skeletonLogger = null;
 
         //Start Skeleton Tracking Variables
         /// <summary>
@@ -96,11 +97,14 @@ namespace FaceTrackingBasics
         private DrawingImage imageSource;
         //End Skeleton Tracking Variables
 
+        private GoProController goProController;
+
+        private String recordingDate;
+
         public MainWindow()
         {
+            //Initialize Kinect
             InitializeComponent();
-
-            skeletonLogger = new SkeletonLogger("skeletonLog.csv");
 
             var faceTrackingViewerBinding = new Binding("Kinect") { Source = sensorChooser };
             faceTrackingViewer.SetBinding(FaceTrackingViewer.KinectProperty, faceTrackingViewerBinding);
@@ -108,6 +112,26 @@ namespace FaceTrackingBasics
             sensorChooser.KinectChanged += SensorChooserOnKinectChanged;
 
             sensorChooser.Start();
+
+            try
+            {
+                goProController = new GoProController();
+                goProController.Initialize();
+            }
+            catch (Exception ex)
+            {
+                
+                MessageBoxResult result = MessageBox.Show("Go pro not initialized ... are you sure you want to continue?", "Go Pro Initialization", MessageBoxButton.YesNo);
+                System.Console.WriteLine(ex.Message);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    goProController = null;
+                }
+                else
+                {
+                }
+            }
         }
 
         private void SensorChooserOnKinectChanged(object sender, KinectChangedEventArgs kinectChangedEventArgs)
@@ -306,6 +330,7 @@ namespace FaceTrackingBasics
             {
                 this.sensor.Stop();
             }
+
         }
 
         /// <summary>
@@ -343,7 +368,10 @@ namespace FaceTrackingBasics
                         {
                             this.DrawBonesAndJoints(skel, dc);
                             //Append Skeleton To A File
-                            skeletonLogger.AppendSkeleton(skel);
+                            if (skeletonLogger != null)
+                            {
+                                skeletonLogger.AppendSkeleton(skel);
+                            }
                         }
                         else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
                         {
@@ -470,6 +498,45 @@ namespace FaceTrackingBasics
 
             drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
         }
-        //End Skeleton Methods
+
+        private void btnStartGame_Click(object sender, RoutedEventArgs e)
+        {
+            btnStartGame.IsEnabled = false;
+            btnStopGame.IsEnabled = true;
+
+            DateTime date = DateTime.Now;
+            recordingDate = date.ToLongDateString() + "_" + date.ToLongTimeString().Replace(':', '_');
+            skeletonLogger = new SkeletonLogger(recordingDate + "_skeletonLog.csv");
+
+            if (goProController != null)
+            {
+                goProController.StartRecording();
+            }
+        }
+
+        private void btnStopGame_Click(object sender, RoutedEventArgs e)
+        {
+            btnStartGame.IsEnabled = true;
+            btnStopGame.IsEnabled = false;
+
+            
+            skeletonLogger.SaveString();
+            skeletonLogger = null;
+
+
+            if (goProController != null)
+            {
+                goProController.StopRecording(recordingDate);
+            }
+
+
+            using (StreamWriter sw = File.CreateText(recordingDate + "info.txt"))
+            {
+                sw.WriteLine(txtDescription.Text);
+            }
+
+        }
+
+
     }
 }
