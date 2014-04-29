@@ -6,7 +6,7 @@
         Title="Face Tracking Basics"
         Closed="WindowClosed"
         Loaded="WindowLoaded" Closing="WindowClosing"
-        Height="635.731" Width="770" 
+        Height="620.06" Width="770" 
         >
 
     <Window.Resources>
@@ -29,15 +29,16 @@
             <Image Grid.Column="1" Source="Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5"/>
         </DockPanel>
         <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center" >
-            <Grid Name="MainGrid" Width="640" Height="300">
-                <Image Name="SkeletonImage"  Width="640" Height="300"/>
-                <Image Name="ColourImage"  Width="640" Height="300" Opacity="0.5"/>
-                <local:FaceTrackingViewer x:Name="faceTrackingViewer"  Width="640" Height="300"/>
+            <Grid Name="MainGrid" Width="640" Height="480">
+                <Image Name="SkeletonImage"  Width="640" Height="480"/>
+                <Image Name="ColourImage"  Width="640" Height="480" Opacity="0.5"/>
+                <local:FaceTrackingViewer x:Name="faceTrackingViewer"/>
             </Grid>
         </Viewbox>
         <Button x:Name="btnStartGame" Content="Start Game" HorizontalAlignment="Left" Margin="428,25,0,0" Grid.Row="1" VerticalAlignment="Top" Width="123" Height="37" Click="btnStartGame_Click"/>
         <Button x:Name="btnStopGame" IsEnabled="False" Content="Stop Game" HorizontalAlignment="Left" Margin="585,25,0,0" Grid.Row="1" VerticalAlignment="Top" Width="123" Height="37" Click="btnStopGame_Click"/>
-        <TextBox x:Name="txtDescription"  HorizontalAlignment="Left" Margin="21,25,0,0" Grid.Row="1" VerticalAlignment="Top" Width="362" Height="37"/>
+        <TextBox x:Name="txtDescription"  HorizontalAlignment="Left" Margin="21,25,0,0" Grid.Row="1" VerticalAlignment="Top" Width="280" Height="37"/>
+        <CheckBox x:Name="chkDownload" Content="Check to import&#xD;&#xA;video" HorizontalAlignment="Left" Margin="313,25,0,0" Grid.Row="1" VerticalAlignment="Top" Height="37" Width="104"/>
 
 
     </Grid>

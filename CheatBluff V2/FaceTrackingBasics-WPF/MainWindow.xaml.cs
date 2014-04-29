@@ -523,12 +523,12 @@ namespace FaceTrackingBasics
             skeletonLogger.SaveString();
             skeletonLogger = null;
 
-
+            string filename = "";
             if (goProController != null)
             {
                 try
                 {
-                    goProController.StopRecording(recordingDate);
+                    filename = goProController.StopRecording(recordingDate, chkDownload.IsChecked == true ? true : false);
                 }
                 catch
                 {
@@ -539,7 +539,8 @@ namespace FaceTrackingBasics
 
             using (StreamWriter sw = File.CreateText(recordingDate + "info.txt"))
             {
-                sw.WriteLine(txtDescription.Text);
+                sw.WriteLine("DESCRIPTION: " + txtDescription.Text);
+                sw.WriteLine("GOPRO FILENAME: " + filename);
             }
 
         }

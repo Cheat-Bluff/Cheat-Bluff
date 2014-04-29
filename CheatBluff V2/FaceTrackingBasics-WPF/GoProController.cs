@@ -49,31 +49,39 @@ namespace FaceTrackingBasics
             }
         }
 
-        public void StopRecording(String recordingDate)
+        public string StopRecording(String recordingDate, bool download)
         {
             camera.CloseShutter();
 
-            // Create the thread object. This does not start the thread.
-            GoProDownloader downloader = new GoProDownloader(camera, recordingDate);
-            Thread downloaderThread = new Thread(downloader.Download);
+            
+            Video video = camera.Contents().VideosAsync().Result.LastOrDefault();
 
-            // Start the worker thread.
-            downloaderThread.Start();
-            Console.WriteLine("main thread: Starting worker thread...");
-
-            // Loop until worker thread activates. 
-            while (!downloaderThread.IsAlive)
+            if (download)
             {
-                ;
+                // Create the thread object. This does not start the thread.
+                GoProDownloader downloader = new GoProDownloader(camera, recordingDate);
+                Thread downloaderThread = new Thread(downloader.Download);
+
+                // Start the worker thread.
+                downloaderThread.Start();
+                Console.WriteLine("main thread: Starting worker thread...");
+
+                // Loop until worker thread activates. 
+                while (!downloaderThread.IsAlive)
+                {
+                    ;
+                }
+
+
+                downloaderThread.Join();
+
+                if (!downloader.successful)
+                {
+                    throw new Exception("Unsuccessful download");
+                }
             }
 
-
-            downloaderThread.Join();
-
-            if (!downloader.successful)
-            {
-                throw new Exception("Unsuccessful download");
-            }
+            return video.Name;
 
         }
 
